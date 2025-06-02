@@ -41,3 +41,22 @@ app.post('/cifrar', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 API César corriendo en http://localhost:${PORT}`);
 });
+
+app.post('/desencriptar', (req, res) => {
+  const { mensaje, desplazamiento } = req.body;
+
+  if (typeof mensaje !== 'string' || typeof desplazamiento !== 'number') {
+    return res.status(400).json({ error: 'Datos inválidos' });
+  }
+
+  // Función que aplica el descifrado César (desplazamiento inverso)
+  function cesarDecipher(texto, shift) {
+    return texto.replace(/[a-zA-Z]/g, (letra) => {
+      const base = letra === letra.toUpperCase() ? 65 : 97;
+      return String.fromCharCode(((letra.charCodeAt(0) - base - shift + 26) % 26) + base);
+    });
+  }
+
+  const mensajeDescifrado = cesarDecipher(mensaje, desplazamiento);
+  res.json({ mensajeDescifrado });
+});
